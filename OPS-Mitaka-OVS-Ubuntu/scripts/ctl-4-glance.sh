@@ -2,7 +2,6 @@
 #
 source config.cfg
 source functions.sh
-source admin-openrc
 
 echocolor "Create the database for GLANCE"
 sleep 3
@@ -112,9 +111,6 @@ sleep 5
 service glance-registry restart
 service glance-api restart
 sleep 3
-
-service glance-registry restart
-service glance-api restart
 
 echocolor "Remove glance.sqlite "
 rm -f /var/lib/glance/glance.sqlite

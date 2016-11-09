@@ -248,7 +248,7 @@ address $CTL_MGNT_IP
 netmask $NETMASK_ADD_MGNT
 EOF
 
-echocolor "Config br-int and br-ex for OpenvSwitch"
+echocolor "Config br-ex for OpenvSwitch"
 sleep 5
 # ovs-vsctl add-br br-int
 ovs-vsctl add-br br-ex

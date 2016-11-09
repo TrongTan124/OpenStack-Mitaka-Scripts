@@ -4,11 +4,21 @@
 source config.cfg
 source functions.sh
 
+#########################################
+echocolor "Enable the OpenStack Mitaka repository"
+	sleep 5
+	apt-get install software-properties-common -y
+	add-apt-repository cloud-archive:mitaka -y
+
+echocolor "Upgrade the packages for server"
+	apt-get -y update && apt-get -y upgrade && apt-get -y dist-upgrade
+
+#########################################
 apt-get -y install python-pip
 pip install \
     https://pypi.python.org/packages/source/c/crudini/crudini-0.7.tar.gz
 
-#
+#########################################
 
 cat << EOF >> /etc/sysctl.conf
 net.ipv4.conf.all.rp_filter=0
@@ -41,6 +51,8 @@ sed -i 's/server 2.debian.pool.ntp.org offline minpoll 8/ \
 sed -i 's/server 3.debian.pool.ntp.org offline minpoll 8/ \
 # server 3.debian.pool.ntp.org offline minpoll 8/g' $ntpfile
 
+# restart chrony after config
+/etc/init.d/chrony restart
 
 sleep 5
 echocolor "Installl package for NOVA"
@@ -258,8 +270,17 @@ sleep 5
 ovs-vsctl add-br br-ex
 ovs-vsctl add-port br-ex eth1
 
+# Restart network
+ifdown -a && ifup -a
+route add default gw $GATEWAY_IP_EXT br-ex
+
+# Add dns
+cat << EOF > /etc/resolv.conf
+nameserver 8.8.8.8 8.8.4.4
+EOF
+
 echocolor "Finished install NEUTRON on CONTROLLER"
 
-sleep 5
-echocolor "Reboot SERVER"
-init 6
+# sleep 5
+# echocolor "Reboot SERVER"
+# init 6
